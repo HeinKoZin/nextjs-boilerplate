@@ -1,9 +1,14 @@
-import { Button } from "@mui/material";
+import { Button, useTheme } from "@mui/material";
+import themeStore from "@stores/theme.store";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
+	const theme = useTheme();
+
+	const toggleTheme = themeStore((state) => state.toggleTheme);
+
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -15,7 +20,10 @@ export default function Home() {
 			<main className={styles.main}>
 				<h1 className={"text-5xl"}>
 					Welcome to{" "}
-					<a href="https://nextjs.org" className="text-red-600">
+					<a
+						href="https://nextjs.org"
+						style={{ color: theme.palette.primary.main }}
+					>
 						Next.js!
 					</a>
 				</h1>
@@ -24,6 +32,10 @@ export default function Home() {
 					Get started by editing{" "}
 					<code className={"text-red-500"}>pages/index.tsx</code>
 				</p>
+
+				<Button className="text-blue-200" onClick={() => toggleTheme()}>
+					Test
+				</Button>
 
 				<div className={styles.grid}>
 					<a href="https://nextjs.org/docs" className={styles.card}>
@@ -51,7 +63,7 @@ export default function Home() {
 						className={styles.card}
 					>
 						<h2>Deploy &rarr;</h2>
-						<Button className="text-blue-200">Test</Button>
+
 						<p>
 							Instantly deploy your Next.js site to a public URL with Vercel.
 						</p>
