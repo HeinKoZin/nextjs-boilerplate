@@ -12,15 +12,23 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import getDesignTokens from "@libs/theme.lib";
 import themeStore from "@stores/theme.store";
+import { NextPage } from "next";
+import { ReactElement, ReactNode } from "react";
 
-export default function App({ Component, pageProps }: AppProps) {
-	return (
-		<StyledEngineProvider injectFirst>
-			<ThemeWrapper>
-				<Component {...pageProps} />
-			</ThemeWrapper>
-		</StyledEngineProvider>
-	);
+export type NextPageWithLayout = NextPage & {
+	getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+	Component: NextPageWithLayout;
+};
+
+export default function App({
+	Component,
+	pageProps: { ...pageProps },
+}: AppPropsWithLayout) {
+	const getLayout = Component.getLayout ?? ((page) => page);
+	return <ThemeWrapper>{getLayout(<Component {...pageProps} />)}</ThemeWrapper>;
 }
 
 const ThemeWrapper = (props: {
@@ -37,5 +45,9 @@ const ThemeWrapper = (props: {
 	let theme = createTheme(getDesignTokens(mode));
 	theme = responsiveFontSizes(theme);
 
-	return <ThemeProvider theme={theme}>{props.children}</ThemeProvider>;
+	return (
+		<StyledEngineProvider injectFirst>
+			<ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+		</StyledEngineProvider>
+	);
 };
